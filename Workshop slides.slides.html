@@ -11905,7 +11905,7 @@ a.anchor-link {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Building-a-Machine-Learning-model-with-Python--(and-no-PhD)">Building a Machine Learning model with Python  (and no PhD)<a class="anchor-link" href="#Building-a-Machine-Learning-model-with-Python--(and-no-PhD)">&#182;</a></h1>
+<h1 id="How-to-build-a-Machine-Learning-model-with-Python-(and-no-PhD)">How to build a Machine Learning model with Python (and no PhD)<a class="anchor-link" href="#How-to-build-a-Machine-Learning-model-with-Python-(and-no-PhD)">&#182;</a></h1>
 </div>
 </div>
 </div></section></section><section><section>
@@ -11915,6 +11915,7 @@ a.anchor-link {
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Agenda">Agenda<a class="anchor-link" href="#Agenda">&#182;</a></h1><ol>
 <li>What is ML?</li>
+<li>What is a tidy dataset?</li>
 <li>An overview of the data pipeline (with Python)</li>
 <li>Let's train a model</li>
 </ol>
@@ -11926,7 +11927,7 @@ a.anchor-link {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="What-is-ML?">What is ML?<a class="anchor-link" href="#What-is-ML?">&#182;</a></h2><p>Machine Learning is a way to get computers to do what you want without explicitely programming them, by feeding them instead examples of what you want.</p>
+<h2 id="What-is-ML?">What is ML?<a class="anchor-link" href="#What-is-ML?">&#182;</a></h2><p>Machine Learning is a way to get computers to do what you want without <strong>explicitely</strong> programming them, by instead feeding them <strong>examples</strong> of what you want.</p>
 <ol>
 <li>Don't use ML if you can program the behaviour explicitely!</li>
 <li>Don't use ML if you don't have data!</li>
@@ -11953,21 +11954,337 @@ a.anchor-link {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="In-practice">In practice<a class="anchor-link" href="#In-practice">&#182;</a></h2><ol>
-<li>Load your data with pandas</li>
-<li><a href="http://www.jeannicholashould.com/tidy-data-in-python.html">Tidy</a> your data:<ul>
+<h2 id="Tidy-Datasets">Tidy Datasets<a class="anchor-link" href="#Tidy-Datasets">&#182;</a></h2><p>Before starting any Machine Learning project, you'll need data. And in addition, you will want your data to be in the form of a <strong>tidy dataset</strong>:</p>
+<ul>
 <li>Each variable forms a column and contains values</li>
 <li>Each observation forms a row</li>
 <li>Each type of observational unit forms a table</li>
 </ul>
-</li>
-<li>Split your data between a training dataset and a test dataset -&gt; <code>sklearn.model_selection.train_test_split</code></li>
-<li>Clean your data (missing values, categorical variables, etc) -&gt; <code>df.fillna</code>, <code>pd.get_dummies</code></li>
-<li>Extract your numerical data as numpy array -&gt; <code>df.as_matrix</code></li>
-<li>Preprocess data with scikit-learn, using a <code>sklearn.pipeline.Pipeline</code></li>
-<li>Learn a scikit-learn model with a <code>sklearn.model_selection.cross_val_score</code> wrapper to evaluate how well your model would generalize</li>
-<li>Maybe adjust your model hyperparemeters -&gt; <code>sklearn.model_selection.GridSearchCV</code></li>
-<li>Learn your model on all your training data, then evaluate on your test data</li>
+<p>This form will enable you to perform easily data analysis, and then Machine Learning. This <a href="http://www.jeannicholashould.com/tidy-data-in-python.html">blog article</a> is a must-read to understand tidy datasets.</p>
+
+</div>
+</div>
+</div></section></section><section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="In-practice">In practice<a class="anchor-link" href="#In-practice">&#182;</a></h2><ol>
+<li>Data wrangling: prepare your data, using Pandas (or the ETL of your choice) -&gt; getting a tidy dataset out of your data</li>
+<li>Data preprocessing: Pandas or scikit-learn</li>
+<li>Model training and evaluation: scikit-learn</li>
+</ol>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="The-building-block:-NumPy">The building block: NumPy<a class="anchor-link" href="#The-building-block:-NumPy">&#182;</a></h3><p>NumPy is the fundamental library for scientific computing in Python. Here I will focus on the NumPy arrays, which are a way to efficiently store numerical matrices in memory, using a C-like representation.</p>
+<p><img src="img/array_vs_list.png" width="800" />
+<em>Image from <a href="http://jakevdp.github.io/blog/2014/05/09/why-python-is-slow/">this</a> blog article</em></p>
+<p>In addition to efficient storage of data, NumPy proposes a lot of so-called <em>universal functions</em> that are applied in batch (either element-wise to a whole array (map) or as a reduce operation axis-wise). It also defines vectorial and matrix operations.</p>
+<p><em>If you really need a universal function that is not already implemented, you can always use <a href="http://numba.pydata.org/numba-doc/dev/user/vectorize.html">Numba</a>.</em></p>
+
+</div>
+</div>
+</div></section></section><section><section>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">117</span><span class="p">,</span> <span class="mi">47</span><span class="p">],</span> 
+                <span class="p">[</span><span class="mi">17</span><span class="p">,</span> <span class="mi">178</span><span class="p">,</span> <span class="mi">72</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">28</span><span class="p">,</span> <span class="mi">179</span><span class="p">,</span> <span class="mi">79</span><span class="p">]])</span>
+<span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[1]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[  144, 13689,  2209],
+       [  289, 31684,  5184],
+       [  784, 32041,  6241]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div><div class="fragment">
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[2]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([ 19., 158.,  66.])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div></div><div class="fragment">
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[3]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>81.0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div></div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Step-one:-extract,-transform,-load-(ETL)-with-Pandas">Step one: extract, transform, load (ETL) with Pandas<a class="anchor-link" href="#Step-one:-extract,-transform,-load-(ETL)-with-Pandas">&#182;</a></h3><p>NumPy arrays are great for performance, but can be tedious to handle in real world. First, your columns may not be all of the same types (numerical, categorical, datetime); then, it's error-prone to handle lines and columns by index rather than by name.</p>
+<p>Pandas DataFrame are built on top of NumPy arrays to alleviate these issues (and many more). It's my go-to library for ETL; when I'm done, I can convert my DataFrame to a numpy array for further computing.</p>
+
+</div>
+</div>
+</div></section></section><section><section>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">arr</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span> <span class="s1">&#39;Size&#39;</span><span class="p">,</span> <span class="s1">&#39;Weight&#39;</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">df</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[4]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Age</th>
+      <th>Size</th>
+      <th>Weight</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>12</td>
+      <td>117</td>
+      <td>47</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>17</td>
+      <td>178</td>
+      <td>72</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>28</td>
+      <td>179</td>
+      <td>79</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div><div class="fragment">
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[5]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1    12
+2    17
+3    28
+Name: Age, dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div></div><div class="fragment">
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[6]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Age        19.0
+Size      158.0
+Weight     66.0
+dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div></div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Step-two:-Machine-Learning-with-scikit-learn">Step two: Machine Learning with scikit-learn<a class="anchor-link" href="#Step-two:-Machine-Learning-with-scikit-learn">&#182;</a></h3><p>Once I have a numpy array containing all my data, I can train machine learning algorithms on it.</p>
+<p>scikit-learn offers good implementations of typical machine learning estimators, and a unified API to link them all. The documentation is also very well-written and will help you choose the right algorithm for your need.</p>
+
+<pre><code>my_classifier = Classifier(hyperparameters)
+my_classifier.fit(X_train, y_train)
+my_classifier.score(X_val, y_val)
+my_classifier.predict(X_test)</code></pre>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Python-ML-pipeline">Python ML pipeline<a class="anchor-link" href="#Python-ML-pipeline">&#182;</a></h3><ol>
+<li><strong>Load</strong> and tidy your data with pandas</li>
+<li><strong>Split</strong> your data between a training dataset and a test dataset -&gt; <code>sklearn.model_selection.train_test_split</code></li>
+<li><strong>Clean</strong> your data (missing values, categorical variables, etc) -&gt; <code>df.fillna</code>, <code>pd.get_dummies</code></li>
+<li><strong>Extract</strong> your numerical data as numpy array -&gt; <code>df.as_matrix</code></li>
+<li><strong>Preprocess</strong> data with scikit-learn, using a <code>sklearn.pipeline.Pipeline</code></li>
+<li><strong>Learn</strong> a scikit-learn model with a <code>sklearn.model_selection.cross_val_score</code> wrapper to evaluate how well your model would generalize</li>
+<li>Maybe <strong>adjust</strong> your model hyperparemeters -&gt; <code>sklearn.model_selection.GridSearchCV</code></li>
+<li>Learn your model on all your training data, then <strong>evaluate</strong> on your test data</li>
 </ol>
 
 </div>
@@ -11979,7 +12296,7 @@ a.anchor-link {
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Let's-learn-a-ML-model!">Let's learn a ML model!<a class="anchor-link" href="#Let's-learn-a-ML-model!">&#182;</a></h2><p><img src="img/pokemon.jpg" width="200" /></p>
 <p>We want to learn to predict the outcome of pokemon battles.</p>
-<p>For that, we have the results of past battles in the file <code>pokemon-challenge/combats_train.csv</code>, and some characteristics of each Pokemon can be found in the file <code>pokemon-challenge/pokemon.csv</code>.</p>
+<p>For that, we have the results of past battles in the file <code>pokemon-challenge/battles_train.csv</code>, and some characteristics of each Pokemon can be found in the file <code>pokemon-challenge/pokemon.csv</code>.</p>
 <p>Let's load the files with pandas and see what we have.</p>
 
 </div>
@@ -11987,7 +12304,7 @@ a.anchor-link {
 </div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -12006,7 +12323,7 @@ a.anchor-link {
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[1]:</div>
+<div class="prompt output_prompt">Out[7]:</div>
 
 
 
@@ -12078,7 +12395,7 @@ a.anchor-link {
 </div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemons</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;pokemon-challenge/pokemon.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -12095,7 +12412,7 @@ a.anchor-link {
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[2]:</div>
+<div class="prompt output_prompt">Out[8]:</div>
 
 
 
@@ -12229,7 +12546,7 @@ a.anchor-link {
 </div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemons</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
@@ -12245,7 +12562,7 @@ a.anchor-link {
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[3]:</div>
+<div class="prompt output_prompt">Out[9]:</div>
 
 
 
@@ -12371,7 +12688,7 @@ a.anchor-link {
 </div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">pokemons</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">])</span>
@@ -12387,7 +12704,7 @@ a.anchor-link {
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[4]:</div>
+<div class="prompt output_prompt">Out[10]:</div>
 
 
 
@@ -12433,7 +12750,7 @@ a.anchor-link {
     </tr>
     <tr>
       <th>top</th>
-      <td>Simisear</td>
+      <td>Goomy</td>
       <td>Water</td>
       <td>Flying</td>
       <td>False</td>
@@ -12481,10 +12798,10 @@ a.anchor-link {
 
 </div>
 </div>
-</div></div><div class="fragment">
+</div></div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">battles</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">battles</span><span class="p">[</span><span class="s1">&#39;First_pokemon&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">battles</span><span class="p">[</span><span class="s1">&#39;Winner&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
@@ -12495,7 +12812,7 @@ a.anchor-link {
 </div>
 </div>
 
-</div></div></section></section><section><section>
+</div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12508,7 +12825,7 @@ a.anchor-link {
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">columns</span>
@@ -12524,7 +12841,7 @@ a.anchor-link {
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[6]:</div>
+<div class="prompt output_prompt">Out[12]:</div>
 
 
 
@@ -12544,25 +12861,25 @@ a.anchor-link {
 </div>
 </div>
 
-</div></div><div class="fragment">
+</div></div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_ml</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;First_pokemon&#39;</span><span class="p">,</span> <span class="s1">&#39;Second_pokemon&#39;</span><span class="p">,</span> <span class="s1">&#39;Winner&#39;</span><span class="p">,</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_ml</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;First_pokemon&#39;</span><span class="p">,</span> <span class="s1">&#39;Second_pokemon&#39;</span><span class="p">,</span> <span class="s1">&#39;Winner&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Name_opponent&#39;</span><span class="p">,</span> 
-                 <span class="s1">&#39;Generation&#39;</span><span class="p">,</span> <span class="s1">&#39;Generation_opponent&#39;</span><span class="p">])</span>
-<span class="c1"># df_ml = df.drop([&#39;First_pokemon&#39;, &#39;Second_pokemon&#39;, &#39;Winner&#39;,</span>
+                 <span class="s1">&#39;Generation&#39;</span><span class="p">,</span> <span class="s1">&#39;Generation_opponent&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># df_ml = df.drop(columns=[&#39;First_pokemon&#39;, &#39;Second_pokemon&#39;, &#39;Winner&#39;,</span>
 <span class="c1">#                 &#39;Name&#39;, &#39;Name_opponent&#39;, </span>
-<span class="c1">#                 &#39;Generation&#39;, &#39;Generation_opponent&#39;], axis=1)</span>
+<span class="c1">#                 &#39;Generation&#39;, &#39;Generation_opponent&#39;])</span>
 </pre></div>
 
 </div>
 </div>
 </div>
 
-</div></div></section></section><section><section>
+</div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12575,7 +12892,7 @@ a.anchor-link {
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_ml</span><span class="o">.</span><span class="n">dtypes</span>
@@ -12591,7 +12908,7 @@ a.anchor-link {
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[8]:</div>
+<div class="prompt output_prompt">Out[14]:</div>
 
 
 
@@ -12636,11 +12953,11 @@ dtype: object</pre>
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_ml</span><span class="p">[</span><span class="s1">&#39;Legendary&#39;</span><span class="p">]</span> <span class="o">=</span><span class="n">df_ml</span><span class="p">[</span><span class="s1">&#39;Legendary&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-<span class="n">df_ml</span><span class="p">[</span><span class="s1">&#39;Legendary_opponent&#39;</span><span class="p">]</span> <span class="o">=</span><span class="n">df_ml</span><span class="p">[</span><span class="s1">&#39;Legendary_opponent&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_ml</span><span class="p">[</span><span class="s1">&#39;Legendary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_ml</span><span class="p">[</span><span class="s1">&#39;Legendary&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">df_ml</span><span class="p">[</span><span class="s1">&#39;Legendary_opponent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_ml</span><span class="p">[</span><span class="s1">&#39;Legendary_opponent&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12660,7 +12977,7 @@ dtype: object</pre>
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">types</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">df_ml</span><span class="p">[</span><span class="s1">&#39;Type 1&#39;</span><span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;Type&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">df_ml</span><span class="p">[</span><span class="s1">&#39;Type 2&#39;</span><span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;Type&#39;</span><span class="p">)</span>
@@ -12673,7 +12990,7 @@ dtype: object</pre>
 </div></div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">types_opponents</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">df_ml</span><span class="p">[</span><span class="s1">&#39;Type 1_opponent&#39;</span><span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;Opponent_Type&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">df_ml</span><span class="p">[</span><span class="s1">&#39;Type 2_opponent&#39;</span><span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;Opponent_Type&#39;</span><span class="p">)</span>
@@ -12686,10 +13003,10 @@ dtype: object</pre>
 </div></div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_ml</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span><span class="n">df_ml</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">types_opponents</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Type 1&#39;</span><span class="p">,</span> <span class="s1">&#39;Type 2&#39;</span><span class="p">,</span> <span class="s1">&#39;Type 1_opponent&#39;</span><span class="p">,</span> <span class="s1">&#39;Type 2_opponent&#39;</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_ml</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span><span class="n">df_ml</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">types_opponents</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Type 1&#39;</span><span class="p">,</span> <span class="s1">&#39;Type 2&#39;</span><span class="p">,</span> <span class="s1">&#39;Type 1_opponent&#39;</span><span class="p">,</span> <span class="s1">&#39;Type 2_opponent&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12709,7 +13026,7 @@ dtype: object</pre>
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_ml</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;pokemon-challenge/cleaned_train_data.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -12838,7 +13155,7 @@ dtype: object</pre>
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.tree</span> <span class="k">import</span> <span class="n">DecisionTreeClassifier</span>
@@ -12861,10 +13178,10 @@ dtype: object</pre>
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">df_ml</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;label&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">df_ml</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">df_ml</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
 </pre></div>
 
@@ -12885,7 +13202,7 @@ dtype: object</pre>
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_val</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">stratify</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
@@ -12907,7 +13224,7 @@ dtype: object</pre>
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">dt</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">()</span>
@@ -12932,7 +13249,7 @@ dtype: object</pre>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Training error 1.0 Validation error 0.93675
+<pre>Training error 1.0 Validation error 0.9355
 </pre>
 </div>
 </div>
@@ -12964,7 +13281,7 @@ dtype: object</pre>
 </div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">cross_val_score</span><span class="p">(</span><span class="n">DecisionTreeClassifier</span><span class="p">(),</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
@@ -12980,13 +13297,13 @@ dtype: object</pre>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[18]:</div>
+<div class="prompt output_prompt">Out[24]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0.9380999429921839</pre>
+<pre>0.9370249554765596</pre>
 </div>
 
 </div>
@@ -13001,19 +13318,19 @@ dtype: object</pre>
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>We said that Decision Trees have the huge advantage of being interpretable. One very nice feature is that they compute feature importances, a numerical value about how important a feature (= a variable) is to predict correctly the label.</p>
 <p>Let's learn again a tree, and see what the feature importances are (<code>dt.feature_importances_</code>).</p>
-<p><em>A side note to Python devs, the trailing underscore in variable names in scikit-learn is not to denote that the variable is private, but rather to denote that it is an estimated value (in constrast to user-defined hyperparameters).</em></p>
 
 </div>
 </div>
 </div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">dt</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">()</span>
 <span class="n">dt</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">feature_importances_</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">df_ml</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="mi">0</span> <span class="p">,</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">feature_importances_</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">df_ml</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+             <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Feature importance&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;Feature importance&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -13026,7 +13343,7 @@ dtype: object</pre>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[19]:</div>
+<div class="prompt output_prompt">Out[25]:</div>
 
 
 
@@ -13049,209 +13366,209 @@ dtype: object</pre>
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>0</th>
+      <th>Feature importance</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>Speed</th>
-      <td>0.407765</td>
+      <td>0.407668</td>
     </tr>
     <tr>
       <th>Speed_opponent</th>
-      <td>0.394507</td>
+      <td>0.393014</td>
     </tr>
     <tr>
       <th>Attack_opponent</th>
-      <td>0.026920</td>
+      <td>0.027161</td>
     </tr>
     <tr>
       <th>Attack</th>
-      <td>0.023463</td>
+      <td>0.023932</td>
     </tr>
     <tr>
       <th>HP</th>
-      <td>0.012431</td>
-    </tr>
-    <tr>
-      <th>Defense</th>
-      <td>0.011057</td>
-    </tr>
-    <tr>
-      <th>HP_opponent</th>
-      <td>0.009454</td>
+      <td>0.011712</td>
     </tr>
     <tr>
       <th>Sp. Atk</th>
-      <td>0.009378</td>
+      <td>0.010365</td>
+    </tr>
+    <tr>
+      <th>Defense</th>
+      <td>0.010343</td>
+    </tr>
+    <tr>
+      <th>HP_opponent</th>
+      <td>0.010013</td>
     </tr>
     <tr>
       <th>Defense_opponent</th>
-      <td>0.008835</td>
+      <td>0.009273</td>
     </tr>
     <tr>
       <th>Sp. Atk_opponent</th>
-      <td>0.007920</td>
+      <td>0.007721</td>
     </tr>
     <tr>
       <th>Opponent_Type_Ghost</th>
-      <td>0.007524</td>
-    </tr>
-    <tr>
-      <th>Sp. Def</th>
-      <td>0.007474</td>
+      <td>0.007713</td>
     </tr>
     <tr>
       <th>Sp. Def_opponent</th>
-      <td>0.006451</td>
+      <td>0.007356</td>
+    </tr>
+    <tr>
+      <th>Sp. Def</th>
+      <td>0.007064</td>
     </tr>
     <tr>
       <th>Opponent_Type_Normal</th>
-      <td>0.004977</td>
-    </tr>
-    <tr>
-      <th>Type_Normal</th>
-      <td>0.004716</td>
+      <td>0.005036</td>
     </tr>
     <tr>
       <th>Type_Ghost</th>
-      <td>0.004098</td>
+      <td>0.004627</td>
+    </tr>
+    <tr>
+      <th>Type_Normal</th>
+      <td>0.004489</td>
     </tr>
     <tr>
       <th>Type_Flying</th>
-      <td>0.003617</td>
-    </tr>
-    <tr>
-      <th>Opponent_Type_Ground</th>
-      <td>0.002810</td>
+      <td>0.003581</td>
     </tr>
     <tr>
       <th>Opponent_Type_Dark</th>
-      <td>0.002761</td>
+      <td>0.002648</td>
     </tr>
     <tr>
       <th>Opponent_Type_Psychic</th>
-      <td>0.002728</td>
+      <td>0.002532</td>
     </tr>
     <tr>
-      <th>Opponent_Type_Electric</th>
-      <td>0.002396</td>
+      <th>Opponent_Type_Ground</th>
+      <td>0.002512</td>
     </tr>
     <tr>
       <th>Opponent_Type_Steel</th>
-      <td>0.002358</td>
+      <td>0.002479</td>
     </tr>
     <tr>
-      <th>Type_Psychic</th>
-      <td>0.002215</td>
+      <th>Opponent_Type_Electric</th>
+      <td>0.002421</td>
     </tr>
     <tr>
       <th>Type_Electric</th>
-      <td>0.002174</td>
+      <td>0.002204</td>
     </tr>
     <tr>
-      <th>Type_Ground</th>
-      <td>0.001913</td>
+      <th>Type_Psychic</th>
+      <td>0.002185</td>
     </tr>
     <tr>
       <th>Opponent_Type_Water</th>
-      <td>0.001884</td>
+      <td>0.001972</td>
     </tr>
     <tr>
-      <th>Type_Dark</th>
-      <td>0.001839</td>
+      <th>Type_Ground</th>
+      <td>0.001918</td>
     </tr>
     <tr>
       <th>Type_Dragon</th>
-      <td>0.001793</td>
-    </tr>
-    <tr>
-      <th>Type_Grass</th>
-      <td>0.001692</td>
-    </tr>
-    <tr>
-      <th>Type_Fighting</th>
-      <td>0.001652</td>
-    </tr>
-    <tr>
-      <th>Type_Poison</th>
-      <td>0.001648</td>
-    </tr>
-    <tr>
-      <th>Opponent_Type_Dragon</th>
-      <td>0.001645</td>
+      <td>0.001895</td>
     </tr>
     <tr>
       <th>Opponent_Type_Poison</th>
-      <td>0.001623</td>
+      <td>0.001757</td>
     </tr>
     <tr>
-      <th>Type_Water</th>
-      <td>0.001607</td>
+      <th>Type_Dark</th>
+      <td>0.001731</td>
     </tr>
     <tr>
-      <th>Opponent_Type_Bug</th>
-      <td>0.001561</td>
-    </tr>
-    <tr>
-      <th>Opponent_Type_Flying</th>
-      <td>0.001406</td>
-    </tr>
-    <tr>
-      <th>Opponent_Type_Fairy</th>
-      <td>0.001347</td>
-    </tr>
-    <tr>
-      <th>Opponent_Type_Fire</th>
-      <td>0.001310</td>
+      <th>Type_Grass</th>
+      <td>0.001711</td>
     </tr>
     <tr>
       <th>Type_Ice</th>
-      <td>0.001293</td>
+      <td>0.001653</td>
+    </tr>
+    <tr>
+      <th>Type_Fighting</th>
+      <td>0.001635</td>
+    </tr>
+    <tr>
+      <th>Type_Water</th>
+      <td>0.001618</td>
+    </tr>
+    <tr>
+      <th>Type_Poison</th>
+      <td>0.001589</td>
+    </tr>
+    <tr>
+      <th>Opponent_Type_Fairy</th>
+      <td>0.001443</td>
+    </tr>
+    <tr>
+      <th>Opponent_Type_Flying</th>
+      <td>0.001403</td>
+    </tr>
+    <tr>
+      <th>Opponent_Type_Dragon</th>
+      <td>0.001385</td>
     </tr>
     <tr>
       <th>Type_Fire</th>
-      <td>0.001275</td>
+      <td>0.001314</td>
+    </tr>
+    <tr>
+      <th>Opponent_Type_Fire</th>
+      <td>0.001243</td>
     </tr>
     <tr>
       <th>Opponent_Type_Fighting</th>
-      <td>0.001198</td>
+      <td>0.001181</td>
     </tr>
     <tr>
-      <th>Opponent_Type_Grass</th>
-      <td>0.001121</td>
-    </tr>
-    <tr>
-      <th>Opponent_Type_Rock</th>
-      <td>0.000978</td>
+      <th>Opponent_Type_Bug</th>
+      <td>0.001119</td>
     </tr>
     <tr>
       <th>Type_Bug</th>
-      <td>0.000794</td>
+      <td>0.001016</td>
+    </tr>
+    <tr>
+      <th>Opponent_Type_Rock</th>
+      <td>0.000925</td>
+    </tr>
+    <tr>
+      <th>Opponent_Type_Grass</th>
+      <td>0.000831</td>
     </tr>
     <tr>
       <th>Opponent_Type_Ice</th>
-      <td>0.000647</td>
+      <td>0.000825</td>
     </tr>
     <tr>
       <th>Type_Steel</th>
-      <td>0.000538</td>
+      <td>0.000467</td>
     </tr>
     <tr>
       <th>Type_Fairy</th>
-      <td>0.000510</td>
+      <td>0.000430</td>
     </tr>
     <tr>
       <th>Legendary</th>
-      <td>0.000259</td>
+      <td>0.000424</td>
     </tr>
     <tr>
       <th>Type_Rock</th>
-      <td>0.000246</td>
+      <td>0.000398</td>
     </tr>
     <tr>
       <th>Legendary_opponent</th>
-      <td>0.000192</td>
+      <td>0.000067</td>
     </tr>
   </tbody>
 </table>
@@ -13275,7 +13592,7 @@ dtype: object</pre>
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">X_speed</span> <span class="o">=</span> <span class="n">df_ml</span><span class="p">[[</span><span class="s1">&#39;Speed&#39;</span><span class="p">,</span> <span class="s1">&#39;Speed_opponent&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
@@ -13292,13 +13609,13 @@ dtype: object</pre>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[20]:</div>
+<div class="prompt output_prompt">Out[26]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0.9306001803765739</pre>
+<pre>0.930625174128136</pre>
 </div>
 
 </div>
@@ -13340,7 +13657,7 @@ dtype: object</pre>
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="k">import</span> <span class="n">RandomForestClassifier</span>
@@ -13353,7 +13670,7 @@ dtype: object</pre>
 </div></div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">()</span>
@@ -13378,7 +13695,7 @@ dtype: object</pre>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Training error 0.9963125 Validation error 0.921125
+<pre>Training error 0.996 Validation error 0.926625
 </pre>
 </div>
 </div>
@@ -13389,7 +13706,7 @@ dtype: object</pre>
 </div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">rf_cv_scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">RandomForestClassifier</span><span class="p">(),</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> 
@@ -13413,8 +13730,8 @@ dtype: object</pre>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Average accuracy for Decision Trees 0.9375499242468702 with a standard deviation of 0.002498749615777828
-Average accuracy for Random Forests 0.9249251115687571 with a standard deviation of 0.004519022057532111
+<pre>Average accuracy for Decision Trees 0.9375999804828113 with a standard deviation of 0.002793708761436804
+Average accuracy for Random Forests 0.924250111568757 with a standard deviation of 0.004572590728928591
 </pre>
 </div>
 </div>
@@ -13437,7 +13754,7 @@ Average accuracy for Random Forests 0.9249251115687571 with a standard deviation
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Bonus-step:-choose-hyperparameters">Bonus step: choose hyperparameters<a class="anchor-link" href="#Bonus-step:-choose-hyperparameters">&#182;</a></h3><p>Until now, we have used all algorithms "out of the box", without choosingany hyperparameters.</p>
+<h3 id="Bonus-step:-choose-hyperparameters">Bonus step: choose hyperparameters<a class="anchor-link" href="#Bonus-step:-choose-hyperparameters">&#182;</a></h3><p>Until now, we have used all algorithms "out of the box", without choosing any hyperparameters.</p>
 <p>First, what are hyperparameters? We call hyperparameters the algorithm parameters which are not learned, but choosen by the user.</p>
 <p>For example, in the Random Forest algorithm, we can choose how many trees we want in our forest. The default is 10, but I can increase it to 15.</p>
 
@@ -13446,7 +13763,7 @@ Average accuracy for Random Forests 0.9249251115687571 with a standard deviation
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">cross_val_score</span><span class="p">(</span><span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
@@ -13462,13 +13779,13 @@ Average accuracy for Random Forests 0.9249251115687571 with a standard deviation
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[24]:</div>
+<div class="prompt output_prompt">Out[30]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0.9331002741968921</pre>
+<pre>0.9332002991906437</pre>
 </div>
 
 </div>
@@ -13482,18 +13799,18 @@ Average accuracy for Random Forests 0.9249251115687571 with a standard deviation
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>We see that the accuracy has improved. But how to know if 15 is the optimal value?</p>
-<p>scikit-learn has a function <code>sklearn.model_selection.GridSearchCV</code> to automatise the search over a grid of parameters. Here, we will only test the impact of the number of trees in Random Forest, varying the value from 5 to 50.</p>
+<p>scikit-learn has a function <code>sklearn.model_selection.GridSearchCV</code> to automatise the search over a grid of parameters. Here, we will only test the impact of the number of trees in Random Forest, varying the value from 5 to 55.</p>
 
 </div>
 </div>
-</div><div class="fragment">
+</div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">GridSearchCV</span>
-<span class="n">tested_values</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;n_estimators&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">5</span><span class="p">))}</span>
+<span class="n">tested_values</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;n_estimators&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">56</span><span class="p">,</span> <span class="mi">5</span><span class="p">))}</span>
 <span class="n">grid_search</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">RandomForestClassifier</span><span class="p">(),</span> <span class="n">tested_values</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="n">grid_search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Best hyperparameter choice&quot;</span><span class="p">,</span> <span class="n">grid_search</span><span class="o">.</span><span class="n">best_params_</span><span class="p">)</span>
@@ -13505,7 +13822,29 @@ Average accuracy for Random Forests 0.9249251115687571 with a standard deviation
 </div>
 </div>
 
-</div></div></section></section><section><section>
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Best hyperparameter choice {&#39;n_estimators&#39;: 55}
+Averaged accuracy per run [0.909375 0.9277   0.9323   0.935575 0.93935  0.939875 0.94025  0.9412
+ 0.94135  0.940625 0.941725]
+Standard deviation per run [0.00851169 0.00745612 0.00226475 0.0031868  0.00391961 0.00402718
+ 0.00402483 0.0037949  0.00272123 0.00518303 0.00410262]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13519,7 +13858,7 @@ Average accuracy for Random Forests 0.9249251115687571 with a standard deviation
 </div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[32]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_types</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;pokemon-challenge/type.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -13533,12 +13872,471 @@ Average accuracy for Random Forests 0.9249251115687571 with a standard deviation
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[32]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Attack type</th>
+      <th>Bug</th>
+      <th>Dark</th>
+      <th>Dragon</th>
+      <th>Electric</th>
+      <th>Fairy</th>
+      <th>Fighting</th>
+      <th>Fire</th>
+      <th>Flying</th>
+      <th>Ghost</th>
+      <th>Grass</th>
+      <th>Ground</th>
+      <th>Ice</th>
+      <th>Normal</th>
+      <th>Poison</th>
+      <th>Psychic</th>
+      <th>Rock</th>
+      <th>Steel</th>
+      <th>Water</th>
+    </tr>
+    <tr>
+      <th>Defensive pokemon type</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Bug</th>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>0.50</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>1.00</td>
+      <td>0.5</td>
+      <td>0.50</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Dark</th>
+      <td>2.0</td>
+      <td>0.5</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>2.0</td>
+      <td>2.00</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.50</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.01</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Dragon</th>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>2.00</td>
+      <td>0.50</td>
+      <td>2.0</td>
+      <td>1.00</td>
+      <td>0.5</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>0.5</td>
+      <td>1.00</td>
+      <td>2.0</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>Electric</th>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>0.50</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>0.5</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>2.00</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>0.5</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Fairy</th>
+      <td>0.5</td>
+      <td>0.5</td>
+      <td>0.01</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>0.50</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>2.00</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Fighting</th>
+      <td>0.5</td>
+      <td>0.5</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>2.0</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>2.00</td>
+      <td>0.5</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Fire</th>
+      <td>0.5</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.5</td>
+      <td>1.00</td>
+      <td>0.5</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>0.5</td>
+      <td>2.00</td>
+      <td>0.5</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>2.0</td>
+      <td>0.5</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Flying</th>
+      <td>0.5</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>2.00</td>
+      <td>1.0</td>
+      <td>0.50</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>0.5</td>
+      <td>0.01</td>
+      <td>2.0</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Ghost</th>
+      <td>0.5</td>
+      <td>2.0</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>0.01</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>2.00</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>0.01</td>
+      <td>0.50</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Grass</th>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>0.50</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>1.00</td>
+      <td>0.5</td>
+      <td>0.50</td>
+      <td>2.0</td>
+      <td>1.00</td>
+      <td>2.00</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>Ground</th>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>0.01</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>2.0</td>
+      <td>1.00</td>
+      <td>2.0</td>
+      <td>1.00</td>
+      <td>0.50</td>
+      <td>1.00</td>
+      <td>0.5</td>
+      <td>1.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Ice</th>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>2.00</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>0.5</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Normal</th>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>2.00</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.01</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Poison</th>
+      <td>0.5</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.5</td>
+      <td>0.50</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>0.5</td>
+      <td>2.00</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>0.50</td>
+      <td>2.00</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Psychic</th>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>0.50</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>2.00</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.50</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Rock</th>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>2.00</td>
+      <td>0.5</td>
+      <td>0.5</td>
+      <td>1.00</td>
+      <td>2.0</td>
+      <td>2.00</td>
+      <td>1.0</td>
+      <td>0.50</td>
+      <td>0.50</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Steel</th>
+      <td>0.5</td>
+      <td>1.0</td>
+      <td>0.50</td>
+      <td>1.00</td>
+      <td>0.5</td>
+      <td>2.00</td>
+      <td>2.0</td>
+      <td>0.5</td>
+      <td>1.00</td>
+      <td>0.5</td>
+      <td>2.00</td>
+      <td>0.5</td>
+      <td>0.50</td>
+      <td>0.01</td>
+      <td>0.50</td>
+      <td>0.5</td>
+      <td>0.5</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Water</th>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>2.00</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>0.5</td>
+      <td>1.0</td>
+      <td>1.00</td>
+      <td>2.0</td>
+      <td>1.00</td>
+      <td>0.5</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.0</td>
+      <td>0.5</td>
+      <td>0.5</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We replaced zeros (type immunity) with a small value, to avoid to mangage infinity (here, 100 will be infinity, which is large in front of all other values).</p>
+<p>We replaced zeros (type immunity) with a small value, to avoid to mangage infinity (here, 100 will be infinity, which is much greater than all other values).</p>
 <p>Type advantages and disadvantages are combined when the Pokemon has more than one type. Also, it applies to the attack which is performed on the Pokemon, and each attack has only one type. We make the hypothesis when the attacker has more than one type that the type advantage will be the average. This is not necessarily true because, even though attack types are correlated to the Pokemon type, the Pokemon can also perform attacks of a different type (for example an Electric attack even if it's a Fire Pokemon).</p>
 <p>We compute the type advantage as follow.</p>
 
@@ -13547,7 +14345,7 @@ Average accuracy for Random Forests 0.9249251115687571 with a standard deviation
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[33]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">type_advantage_offensive</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">to1</span><span class="p">,</span> <span class="n">to2</span><span class="p">):</span>
@@ -13572,7 +14370,7 @@ Average accuracy for Random Forests 0.9249251115687571 with a standard deviation
 </div></div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[34]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_ml_type</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;First_pokemon&#39;</span><span class="p">,</span> <span class="s1">&#39;Second_pokemon&#39;</span><span class="p">,</span> 
@@ -13589,13 +14387,13 @@ Average accuracy for Random Forests 0.9249251115687571 with a standard deviation
 </div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[35]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">types_</span> <span class="o">=</span>  <span class="n">df_ml_type</span><span class="p">[[</span><span class="s1">&#39;Type 1&#39;</span><span class="p">,</span> <span class="s1">&#39;Type 2&#39;</span><span class="p">,</span> <span class="s1">&#39;Type 1_opponent&#39;</span><span class="p">,</span> <span class="s1">&#39;Type 2_opponent&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 <span class="n">df_ml_type</span><span class="p">[</span><span class="s1">&#39;Type_advantage_offensive&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">types_</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">type_advantage_offensive</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">df_ml_type</span><span class="p">[</span><span class="s1">&#39;Type_advantage_defensive&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">types_</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">type_advantage_defensive</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">df_ml_type</span> <span class="o">=</span> <span class="n">df_ml_type</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Type 1&#39;</span><span class="p">,</span> <span class="s1">&#39;Type 2&#39;</span><span class="p">,</span> <span class="s1">&#39;Type 1_opponent&#39;</span><span class="p">,</span> <span class="s1">&#39;Type 2_opponent&#39;</span><span class="p">])</span>
+<span class="n">df_ml_type</span> <span class="o">=</span> <span class="n">df_ml_type</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Type 1&#39;</span><span class="p">,</span> <span class="s1">&#39;Type 2&#39;</span><span class="p">,</span> <span class="s1">&#39;Type 1_opponent&#39;</span><span class="p">,</span> <span class="s1">&#39;Type 2_opponent&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -13605,13 +14403,172 @@ Average accuracy for Random Forests 0.9249251115687571 with a standard deviation
 </div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[36]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_ml_type</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
 </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[36]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>label</th>
+      <th>HP</th>
+      <th>Attack</th>
+      <th>Defense</th>
+      <th>Sp. Atk</th>
+      <th>Sp. Def</th>
+      <th>Speed</th>
+      <th>Legendary</th>
+      <th>HP_opponent</th>
+      <th>Attack_opponent</th>
+      <th>Defense_opponent</th>
+      <th>Sp. Atk_opponent</th>
+      <th>Sp. Def_opponent</th>
+      <th>Speed_opponent</th>
+      <th>Legendary_opponent</th>
+      <th>Type_advantage_offensive</th>
+      <th>Type_advantage_defensive</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>50</td>
+      <td>64</td>
+      <td>50</td>
+      <td>45</td>
+      <td>50</td>
+      <td>41</td>
+      <td>0</td>
+      <td>70</td>
+      <td>70</td>
+      <td>40</td>
+      <td>60</td>
+      <td>40</td>
+      <td>60</td>
+      <td>0</td>
+      <td>0.75</td>
+      <td>0.500000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>91</td>
+      <td>90</td>
+      <td>72</td>
+      <td>90</td>
+      <td>129</td>
+      <td>108</td>
+      <td>1</td>
+      <td>91</td>
+      <td>129</td>
+      <td>90</td>
+      <td>72</td>
+      <td>90</td>
+      <td>108</td>
+      <td>1</td>
+      <td>2.50</td>
+      <td>1.333333</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>55</td>
+      <td>40</td>
+      <td>85</td>
+      <td>80</td>
+      <td>105</td>
+      <td>40</td>
+      <td>0</td>
+      <td>75</td>
+      <td>75</td>
+      <td>75</td>
+      <td>125</td>
+      <td>95</td>
+      <td>40</td>
+      <td>0</td>
+      <td>1.00</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>40</td>
+      <td>40</td>
+      <td>40</td>
+      <td>70</td>
+      <td>40</td>
+      <td>20</td>
+      <td>0</td>
+      <td>77</td>
+      <td>120</td>
+      <td>90</td>
+      <td>60</td>
+      <td>90</td>
+      <td>48</td>
+      <td>0</td>
+      <td>0.50</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>70</td>
+      <td>60</td>
+      <td>125</td>
+      <td>115</td>
+      <td>70</td>
+      <td>55</td>
+      <td>0</td>
+      <td>20</td>
+      <td>10</td>
+      <td>230</td>
+      <td>10</td>
+      <td>230</td>
+      <td>5</td>
+      <td>0</td>
+      <td>2.00</td>
+      <td>1.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13627,10 +14584,10 @@ Average accuracy for Random Forests 0.9249251115687571 with a standard deviation
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[37]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X_type</span> <span class="o">=</span> <span class="n">df_ml_type</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;label&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X_type</span> <span class="o">=</span> <span class="n">df_ml_type</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
 <span class="n">y_type</span> <span class="o">=</span> <span class="n">df_ml_type</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
 <span class="n">cross_val_score</span><span class="p">(</span><span class="n">DecisionTreeClassifier</span><span class="p">(),</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 </pre></div>
@@ -13639,18 +14596,146 @@ Average accuracy for Random Forests 0.9249251115687571 with a standard deviation
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[37]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.9377249867656243</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div></div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[38]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">dt</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">()</span>
 <span class="n">dt</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_type</span><span class="p">,</span> <span class="n">y_type</span><span class="p">)</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">feature_importances_</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">df_ml_type</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="mi">0</span> <span class="p">,</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">feature_importances_</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">df_ml_type</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+             <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Feature importance&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;Feature importance&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
 </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[38]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Feature importance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Speed</th>
+      <td>0.410625</td>
+    </tr>
+    <tr>
+      <th>Speed_opponent</th>
+      <td>0.393651</td>
+    </tr>
+    <tr>
+      <th>Type_advantage_offensive</th>
+      <td>0.039176</td>
+    </tr>
+    <tr>
+      <th>Attack_opponent</th>
+      <td>0.028135</td>
+    </tr>
+    <tr>
+      <th>Attack</th>
+      <td>0.023503</td>
+    </tr>
+    <tr>
+      <th>Type_advantage_defensive</th>
+      <td>0.023084</td>
+    </tr>
+    <tr>
+      <th>HP_opponent</th>
+      <td>0.014308</td>
+    </tr>
+    <tr>
+      <th>HP</th>
+      <td>0.013558</td>
+    </tr>
+    <tr>
+      <th>Defense_opponent</th>
+      <td>0.010831</td>
+    </tr>
+    <tr>
+      <th>Defense</th>
+      <td>0.009824</td>
+    </tr>
+    <tr>
+      <th>Sp. Atk</th>
+      <td>0.009533</td>
+    </tr>
+    <tr>
+      <th>Sp. Def_opponent</th>
+      <td>0.008307</td>
+    </tr>
+    <tr>
+      <th>Sp. Def</th>
+      <td>0.007391</td>
+    </tr>
+    <tr>
+      <th>Sp. Atk_opponent</th>
+      <td>0.007175</td>
+    </tr>
+    <tr>
+      <th>Legendary_opponent</th>
+      <td>0.000505</td>
+    </tr>
+    <tr>
+      <th>Legendary</th>
+      <td>0.000394</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13669,14 +14754,16 @@ Average accuracy for Random Forests 0.9249251115687571 with a standard deviation
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Now-we-can-predict-new-battle-outcomes">Now we can predict new battle outcomes<a class="anchor-link" href="#Now-we-can-predict-new-battle-outcomes">&#182;</a></h2><p>We will need to perform the same preprocessing steps that we ran on the training data to prepare the dataset.</p>
+<h2 id="Now-we-can-predict-new-battle-outcomes">Now we can predict new battle outcomes<a class="anchor-link" href="#Now-we-can-predict-new-battle-outcomes">&#182;</a></h2><p>We've been interating on our test data with different algorithms and models and hyperparameters, but what if we learned how to be good on this data, and not on real life data (overfitting) ?
+There are data in another dataset that we've left untouched, to simulate real life data that we really can't predict. Let's see how we perform on those.</p>
+<p>We will need to perform the same preprocessing steps that we ran on the training data to prepare the dataset.</p>
 
 </div>
 </div>
-</div><div class="fragment">
+</div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[39]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">battles_test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;pokemon-challenge/battles_test.csv&#39;</span><span class="p">)</span>
@@ -13698,15 +14785,199 @@ Average accuracy for Random Forests 0.9249251115687571 with a standard deviation
 </div>
 </div>
 
-</div></div></section></section><section><section>
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[39]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>label</th>
+      <th>HP</th>
+      <th>Attack</th>
+      <th>Defense</th>
+      <th>Sp. Atk</th>
+      <th>Sp. Def</th>
+      <th>Speed</th>
+      <th>Legendary</th>
+      <th>HP_opponent</th>
+      <th>Attack_opponent</th>
+      <th>...</th>
+      <th>Opponent_Type_Ghost</th>
+      <th>Opponent_Type_Grass</th>
+      <th>Opponent_Type_Ground</th>
+      <th>Opponent_Type_Ice</th>
+      <th>Opponent_Type_Normal</th>
+      <th>Opponent_Type_Poison</th>
+      <th>Opponent_Type_Psychic</th>
+      <th>Opponent_Type_Rock</th>
+      <th>Opponent_Type_Steel</th>
+      <th>Opponent_Type_Water</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>80</td>
+      <td>100</td>
+      <td>123</td>
+      <td>122</td>
+      <td>120</td>
+      <td>80</td>
+      <td>0</td>
+      <td>70</td>
+      <td>90</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>90</td>
+      <td>93</td>
+      <td>55</td>
+      <td>70</td>
+      <td>55</td>
+      <td>55</td>
+      <td>0</td>
+      <td>120</td>
+      <td>100</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>70</td>
+      <td>145</td>
+      <td>88</td>
+      <td>140</td>
+      <td>70</td>
+      <td>112</td>
+      <td>0</td>
+      <td>75</td>
+      <td>80</td>
+      <td>...</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>35</td>
+      <td>70</td>
+      <td>55</td>
+      <td>45</td>
+      <td>55</td>
+      <td>25</td>
+      <td>0</td>
+      <td>80</td>
+      <td>70</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>60</td>
+      <td>69</td>
+      <td>95</td>
+      <td>69</td>
+      <td>95</td>
+      <td>36</td>
+      <td>0</td>
+      <td>65</td>
+      <td>65</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 51 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[40]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">df_ml</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;label&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">df_ml</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">df_ml</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
-<span class="n">X_test</span> <span class="o">=</span> <span class="n">df_ml_test</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;label&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">df_ml_test</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
 <span class="n">y_test</span> <span class="o">=</span> <span class="n">df_ml_test</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
 </pre></div>
 
@@ -13717,7 +14988,7 @@ Average accuracy for Random Forests 0.9249251115687571 with a standard deviation
 </div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[41]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">dt</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">()</span>
@@ -13729,7 +15000,62 @@ Average accuracy for Random Forests 0.9249251115687571 with a standard deviation
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[41]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.9426</pre>
 </div>
+
+</div>
+
+</div>
+</div>
+
+</div></section></section><section><section>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[42]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+<span class="n">rf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">rf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[42]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.945</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div></section></section>
 </div>
 </div>
 
