@@ -1,0 +1,7 @@
+name: ml-workshop
+channels:
+  - defaults
+dependencies:
+  - jupyter
+  - scikit-learn
+  - pandas
