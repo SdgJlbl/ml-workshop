@@ -1,3 +1,4 @@
+  ipython==6.3
   jupyter
   pandas
   scikit-learn
